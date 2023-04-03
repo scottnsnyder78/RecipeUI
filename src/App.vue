@@ -1,8 +1,7 @@
 <template>
   <p>Value: {{ value }}</p>
-  <vue-number-input v-model="value" :min="1" :max="10" @update:model-value="fetchData" inline controls></vue-number-input><br/>
-  <RecipeCard v-for="recipe of recipes" v-on:click="replaceRecipe(recipe.id)" :key="recipe.id" :recipe="recipe"/>
-
+  <vue-number-input v-model="value" :min="1" :max="30" @update:model-value="fetchData" inline controls></vue-number-input><br/>
+  <RecipeCard v-for="recipe of recipes" :key="recipe.id" :recipe="recipe"/>
   <p v-if="loading">
     Still loading..
   </p>
@@ -40,7 +39,6 @@ export default {
       let clickedRecipe = this.recipes.find(x => x.id === id);
       const index = this.recipes.indexOf(clickedRecipe);
 
-      console.log(index);
       fetch('https://veggieapi.azurewebsites.net/GetRandomMenu/1',  {
         method: 'get',
         headers: {
@@ -59,12 +57,9 @@ export default {
           })
           .then(json => {
             // set the response data
-            console.log(index);
-            console.log(json[0]);
-            console.log(this.recipes);
             let x = json[0];
             this.recipes[index] = x;
-            console.log(this.recipes);
+            localStorage.recipes = JSON.stringify(this.recipes);
           })
           .catch(err => {
         this.error.value = err;
@@ -101,15 +96,25 @@ export default {
           .then(json => {
             // set the response data
             let x = json;
+            if(JSON.parse(localStorage.recipes)) {
+              this.recipes = JSON.parse(localStorage.recipes);
+            }
+            //this.recipes = JSON.parse(localStorage.recipes);
+            console.log("test");
+            //console.log(localStorage.recipes);
             if(this.recipes) {
-              this.recipes.push(x[newValue - 1]);
+              this.recipes = [...this.recipes, ...x];
             }
             else {
               this.recipes = x;
             }
             this.recipes.length = newValue;
+            localStorage.recipes = JSON.stringify(this.recipes);
+            console.log(localStorage.recipes);
+            console.log(this.recipes);
           })
           .catch(err => {
+            console.log(err);
             this.error.value = err;
             // In case a custom JSON error response was provided
             if (err.json) {
