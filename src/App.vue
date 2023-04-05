@@ -107,7 +107,7 @@ export default {
               this.recipes = x;
             }
             this.recipes.length = newValue;
-            this.recipes.forEach(element => console.log(element.ingredients));
+            this.recipes.forEach(element => console.log(element.yields[0]?.ingredients));
 
 
             localStorage.recipes = JSON.stringify(this.recipes);
