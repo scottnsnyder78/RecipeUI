@@ -96,12 +96,10 @@ export default {
           .then(json => {
             // set the response data
             let x = json;
-            if(JSON.parse(localStorage.recipes)) {
+            if(localStorage.recipes) {
               this.recipes = JSON.parse(localStorage.recipes);
+              newValue = Math.max(this.recipes.length, newValue);
             }
-            //this.recipes = JSON.parse(localStorage.recipes);
-            console.log("test");
-            //console.log(localStorage.recipes);
             if(this.recipes) {
               this.recipes = [...this.recipes, ...x];
             }
@@ -109,9 +107,10 @@ export default {
               this.recipes = x;
             }
             this.recipes.length = newValue;
+            this.recipes.forEach(element => console.log(element.ingredients));
+
+
             localStorage.recipes = JSON.stringify(this.recipes);
-            console.log(localStorage.recipes);
-            console.log(this.recipes);
           })
           .catch(err => {
             console.log(err);
